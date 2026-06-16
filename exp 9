@@ -1,0 +1,36 @@
+import cv2
+import numpy as np
+
+cap = cv2.VideoCapture('/content/nature.mp4')
+
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
+out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640,480))
+
+while True:
+    ret, frame = cap.read()
+
+    if not ret:
+        break
+
+    frame = cv2.resize(frame, (640,480))
+
+    pts1 = np.float32([[50,50],
+                       [590,50],
+                       [50,430],
+                       [590,430]])
+
+    pts2 = np.float32([[0,0],
+                       [640,0],
+                       [100,480],
+                       [540,480]])
+
+    M = cv2.getPerspectiveTransform(pts1, pts2)
+
+    transformed = cv2.warpPerspective(frame, M, (640,480))
+
+    out.write(transformed)
+
+cap.release()
+out.release()
+
+print("Video Saved Successfully")
